@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HawkSec Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #D1D5DB;
+            background-color: #1F2937;
+        }
+        header {
+            background-color: #111827;
+            border-bottom: 2px solid #107468;
+        }
+        footer {
+            background-color: #111827;
+            border-top: 2px solid #107468;
+        }
+        .hero {
+            background: linear-gradient(to right, #107468, #2A9385);
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border-color: #2A9385;
+        }
+        .btn-primary {
+            background-color: #FBBF24;
+            color: #111827;
+        }
+        .btn-primary:hover {
+            background-color: #2A9385;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-10">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="img/hawksec.png" alt="HawkSec Logo" class="h-10 w-auto" onerror="this.style.display='none';">
+                <h1 class="text-2xl font-bold ml-2 text-[#107468]" style="font-family: 'Poppins', sans-serif;">HawkSec Store</h1>
+            </div>
+            <div class="space-x-4">
+                <a href="/" class="hover:text-[#2A9385]">Início</a>
+                <a href="#about" class="hover:text-[#2A9385]">Sobre</a>
+                <a href="#cart" class="hover:text-[#2A9385]">
+                    <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-20 pb-10">
+        <!-- Hero Section -->
+        <section class="hero py-16 text-center text-white">
+            <div class="max-w-4xl mx-auto px-4">
+                <h2 class="text-4xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">HawkSec Store</h2>
+                <p class="text-lg mb-6">Explore itens exclusivos da HawkSec, perfeitos para fãs de cibersegurança e colecionadores!</p>
+                <form action="/review" method="GET" class="max-w-md mx-auto flex">
+                    <input
+                        type="text"
+                        name="item"
+                        id="item"
+                        placeholder="Buscar item..."
+                        class="w-full p-2 rounded-l-md bg-[#0A4D44] border border-[#107468] text-white focus:outline-none focus:ring-2 focus:ring-[#2A9385]"
+                    >
+                    <button
+                        type="submit"
+                        class="p-2 btn-primary font-bold rounded-r-md transition"
+                    >
+                        Buscar
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Error Message -->
+        <% if (error) { %>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <p class="text-center text-red-500 font-semibold"><%= error %></p>
+            </div>
+        <% } %>
+
+        <!-- Items Grid -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <h3 class="text-2xl font-bold mb-6 text-[#107468]" style="font-family: 'Poppins', sans-serif;">Nossos Produtos</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% items.forEach(item => { %>
+                    <a href="/review?item=<%= encodeURIComponent(item.name) %>" class="item-card bg-[#0A4D44] p-4 rounded-lg border border-[#107468]">
+                        <img src="<%= item.image %>" alt="<%= item.name %>" class="w-full object-cover rounded-md mb-4">
+                        <h4 class="text-lg font-semibold text-[#F3F4F6]"><%= item.name %></h4>
+                    </a>
+                <% }) %>
+                <% if (items.length === 0) { %>
+                    <p class="text-center text-gray-400 col-span-full">Nenhum item disponível no momento.</p>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm mb-2 text-[#F3F4F6]">HawkSec Store © 2025. Todos os direitos reservados.</p>
+            <p class="text-sm mb-2 text-[#F3F4F6]">Contato: <a href="mailto:contato@hawksec.com" class="hover:text-[#2A9385]">contato@hawksec.com</a></p>
+            <div class="flex justify-center space-x-4">
+                <a href="#" class="hover:text-[#2A9385] text-[#F3F4F6]">Twitter</a>
+                <a href="#" class="hover:text-[#2A9385] text-[#F3F4F6]">Instagram</a>
+                <a href="#" class="hover:text-[#2A9385] text-[#F3F4F6]">Discord</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

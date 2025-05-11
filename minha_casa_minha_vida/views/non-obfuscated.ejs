@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Não olhe o código da página</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border: 2px solid #00ffcc;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        .container {
+            backdrop-filter: blur(5px);
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid #00ffcc;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="confetti.min.js"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center text-gray-100">
+    <div class="crosshair"></div>
+    <div class="container max-w-md mx-auto p-6 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold text-center text-[#00ffcc] mb-4">Acesse sua casa</h1>
+        <p class="text-center text-gray-300 mb-6">Para obter acesso, insira a senha de 12 caracteres.</p>
+        <form id="passForm" class="space-y-4">
+            <div>
+                <label for="passInput" class="block text-sm font-medium text-gray-200">Senha</label>
+                <input
+                    type="text"
+                    id="passInput"
+                    placeholder="Insira a senha de 12 caracteres"
+                    class="w-full mt-1 p-2 bg-gray-800 border border-[#00ffcc] rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#00ffcc]"
+                >
+            </div>
+            <button
+                type="submit"
+                class="w-full py-2 bg-[#00ffcc] text-gray-900 font-bold rounded-md hover:bg-[#00cc99] transition"
+            >
+                Verificar
+            </button>
+            <p id="result" class="text-center text-sm text-gray-300"></p>
+        </form>
+    </div>
+
+    <script>
+
+        async function validatePassword(input) {
+            if (input.length !== 12) {
+                return { valid: false, message: "A senha deve ter 12 caracteres" };
+            }
+
+            const password_check = 'F4#:}cMVUzIBk';
+
+            const inputParts = [
+                input.slice(0, 3),
+                input.slice(3, 6),
+                input.slice(6, 9),
+                input.slice(9, 12)
+            ];
+
+            const password = inputParts[0].split("").reverse().join("") + inputParts[1].split("").map(c => String.fromCharCode(c.charCodeAt(0) + 2)).join("") + btoa(inputParts[2]) + inputParts[3].split("").map((c, i) => String.fromCharCode(c.charCodeAt(0) + i + 1)).join("");
+
+            if (
+                password == password_check
+            ) {
+                try {
+                    const response = await fetch(`/flag?password=${encodeURIComponent(input)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.flag) {
+                            return { valid: true, message: `Sucesso! Flag: ${data.flag}` };
+                        } else {
+                            return { valid: false, message: "Senha incorreta. Tente de novo." };
+                        }
+                    } else {
+                        return { valid: false, message: "Backend error. Try again later." };
+                    }
+                } catch (error) {
+                    return { valid: false, message: "Network error. Check your connection." };
+                }
+            } else {
+                return { valid: false, message: "Senha incorreta. Tente de novo." };
+            }
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("passForm");
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const input = document.getElementById("passInput").value;
+                const result = await validatePassword(input);
+                document.getElementById("result").textContent = result.message;
+                document.getElementById("result").className = result.valid 
+                    ? "text-center text-sm text-[#00ffcc]" 
+                    : "text-center text-sm text-red-400";
+
+                if (result.valid) {
+                    confetti.start();
+
+                    setTimeout(() => {
+                        confetti.stop();
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
